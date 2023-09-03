@@ -22,6 +22,9 @@ variable "vm_credentials" {
   })
 
 }
+variable "private_key_location" {
+  description = "VM private key"
+}
 
 # Creating a resource group
 resource "azurerm_resource_group" "myapp-res-grp" {
@@ -148,7 +151,24 @@ resource "azurerm_linux_virtual_machine" "myapp-vm" {
     sku       = "20_04-lts"
     version   = "latest"
   }
-  user_data = filebase64("docker.sh")
+  # user_data = filebase64("docker.sh")
+
+  connection {
+    type        = "ssh"
+    host        = self.public_ip_address
+    user        = self.admin_username
+    private_key = file(var.private_key_location)
+
+  }
+
+  provisioner "file" {
+   source = "docker.sh"
+   destination = "/home/any_username/docker.sh"
+  }
+
+  provisioner "remote-exec" {
+    script = file("docker.sh")
+  }
 }
 
 output "vm_ip" {

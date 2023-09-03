@@ -163,11 +163,11 @@ resource "azurerm_linux_virtual_machine" "myapp-vm" {
 
   provisioner "file" {
    source = "docker.sh"
-   destination = "/home/any_username/docker.sh"
+   destination = "/home/any_username/entry_point.sh"
   }
 
   provisioner "remote-exec" {
-    script = file("docker.sh")
+    script = file("entry_point.sh")
   }
 }
 
